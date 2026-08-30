@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TATI · CALMA</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f7f4f1;
+  color: #403b38;
+}
+
+.container {
+  max-width: 520px;
+  margin: auto;
+  padding: 28px 20px 40px;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0 30px;
+}
+
+.logo {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.subtitle {
+  margin-top: 8px;
+  color: #827a75;
+  font-size: 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 5px 20px rgba(60,50,45,.06);
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+}
+
+.card p {
+  color: #817873;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  padding: 17px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #403b38;
+  color: white;
+}
+
+.secondary {
+  background: #eee9e5;
+  color: #403b38;
+}
+
+.crisis {
+  background: #eadbd6;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.back {
+  background: transparent;
+  color: #706863;
+  text-align: left;
+  padding: 5px 0 20px;
+  font-weight: 500;
+}
+
+.number {
+  font-size: 14px;
+  color: #9b918b;
+  margin-bottom: 8px;
+}
+
+.question {
+  font-size: 25px;
+  line-height: 1.25;
+  margin-bottom: 22px;
+}
+
+.scale {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr);
+  gap: 5px;
+  margin: 15px 0 25px;
+}
+
+.scale button {
+  padding: 10px 2px;
+  background: #eee9e5;
+  color: #403b38;
+  border-radius: 10px;
+}
+
+.scale button.selected {
+  background: #403b38;
+  color: white;
+}
+
+.tool {
+  background: #f3efec;
+  border-radius: 18px;
+  padding: 18px;
+  margin: 10px 0;
+}
+
+.tool h3 {
+  margin: 0 0 7px;
+}
+
+.tool p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.timer {
+  font-size: 52px;
+  text-align: center;
+  margin: 25px 0;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  min-height: 130px;
+  border: 1px solid #ddd5d0;
+  border-radius: 15px;
+  padding: 15px;
+  font-family: inherit;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.saved {
+  text-align: center;
+  padding: 15px;
+  color: #716962;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <div class="logo">TATI · CALMA</div>
+  <div class="subtitle">Un lugar para bajar un cambio.</div>
+</header>
+
+<!-- INICIO -->
+<section id="home" class="screen active">
+
+  <div class="card crisis">
+    <h2>🫶 Estoy ansiosa</h2>
+    <p>
+      No necesitás resolver todo ahora.
+      Primero vamos a bajar la intensidad.
+    </p>
+    <button onclick="show('anxiety')">Necesito ayuda ahora</button>
+  </div>
+
+  <div class="card">
+    <h2>📅 Registrar mi día</h2>
+    <p>
+      Guardá cómo te sentiste y qué pasó durante el día.
+    </p>
+    <button class="secondary" onclick="show('day')">
+      Registrar
+    </button>
+  </div>
+
+  <div class="card">
+    <h2>📈 Ver mi progreso</h2>
+    <p>
+      Mirá tus registros y empezá a reconocer patrones.
+    </p>
+    <button class="secondary" onclick="show('progress')">
+      Ver progreso
+    </button>
+  </div>
+
+</section>
+
+
+<!-- ANSIEDAD -->
+<section id="anxiety" class="screen">
+
+  <button class="back" onclick="show('home')">← Volver</button>
+
+  <div class="card">
+
+    <div class="number">PASO 1</div>
+
+    <div class="question">
+      ¿Qué tan intensa está la ansiedad ahora?
+    </div>
+
+    <div class="scale" id="beforeScale">
+      <button onclick="selectScale(this)">0</button>
+      <button onclick="selectScale(this)">1</button>
+      <button onclick="selectScale(this)">2</button>
+      <button onclick="selectScale(this)">3</button>
+      <button onclick="selectScale(this)">4</button>
+      <button onclick="selectScale(this)">5</button>
+      <button onclick="selectScale(this)">6</button>
+      <button onclick="selectScale(this)">7</button>
+      <button onclick="selectScale(this)">8</button>
+      <button onclick="selectScale(this)">9</button>
+      <button onclick="selectScale(this)">10</button>
+    </div>
+
+    <button onclick="show('tools')">
+      Continuar
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- HERRAMIENTAS -->
+<section id="tools" class="screen">
+
+  <button class="back" onclick="show('anxiety')">← Volver</button>
+
+  <div class="card">
+
+    <div class="number">PASO 2</div>
+
+    <div class="question">
+      Elegí una herramienta.
+    </div>
+
+    <div class="tool">
+      <h3>🌬️ Respiración</h3>
+      <p>
+        Inhalá lentamente durante 4 segundos.
+        Exhalá durante 6. Repetí varias veces.
+      </p>
+    </div>
+
+    <div class="tool">
+      <h3>🧊 Frío / TIPP</h3>
+      <p>
+        Un estímulo frío puede ayudarte a cambiar
+        rápidamente la intensidad de la activación.
+      </p>
+    </div>
+
+    <div class="tool">
+      <h3>👀 Grounding 5-4-3-2-1</h3>
+      <p>
+        Nombrá 5 cosas que ves, 4 que tocás,
+        3 que escuchás, 2 que olés y 1 que saboreás.
+      </p>
+    </div>
+
+    <div class="tool">
+      <h3>⏳ Retrasar la respuesta</h3>
+      <p>
+        No tomes decisiones mientras la emoción está
+        en su punto máximo. Esperá unos minutos.
+      </p>
+    </div>
+
+    <button onclick="show('after')">
+      Ya elegí una herramienta
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- DESPUÉS -->
+<section id="after" class="screen">
+
+  <button class="back" onclick="show('tools')">← Volver</button>
+
+  <div class="card">
+
+    <div class="number">PASO 3</div>
+
+    <div class="question">
+      ¿Cómo está la ansiedad ahora?
+    </div>
+
+    <div class="scale">
+      <button onclick="selectScale(this)">0</button>
+      <button onclick="selectScale(this)">1</button>
+      <button onclick="selectScale(this)">2</button>
+      <button onclick="selectScale(this)">3</button>
+      <button onclick="selectScale(this)">4</button>
+      <button onclick="selectScale(this)">5</button>
+      <button onclick="selectScale(this)">6</button>
+      <button onclick="selectScale(this)">7</button>
+      <button onclick="selectScale(this)">8</button>
+      <button onclick="selectScale(this)">9</button>
+      <button onclick="selectScale(this)">10</button>
+    </div>
+
+    <button onclick="show('complete')">
+      Terminar
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- COMPLETADO -->
+<section id="complete" class="screen">
+
+  <div class="card" style="text-align:center">
+
+    <div style="font-size:50px">🤍</div>
+
+    <h2>Lo hiciste.</h2>
+
+    <p>
+      La ansiedad no tenía que desaparecer.
+      Solo necesitabas atravesar este momento.
+    </p>
+
+    <button onclick="show('home')">
+      Volver al inicio
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- REGISTRO -->
+<section id="day" class="screen">
+
+  <button class="back" onclick="show('home')">← Volver</button>
+
+  <div class="card">
+
+    <h2>📅 Mi día</h2>
+
+    <p>¿Cómo fue tu día?</p>
+
+    <div class="scale">
+      <button onclick="selectScale(this)">0</button>
+      <button onclick="selectScale(this)">1</button>
+      <button onclick="selectScale(this)">2</button>
+      <button onclick="selectScale(this)">3</button>
+      <button onclick="selectScale(this)">4</button>
+      <button onclick="selectScale(this)">5</button>
+      <button onclick="selectScale(this)">6</button>
+      <button onclick="selectScale(this)">7</button>
+      <button onclick="selectScale(this)">8</button>
+      <button onclick="selectScale(this)">9</button>
+      <button onclick="selectScale(this)">10</button>
+    </div>
+
+    <p>¿Querés dejar una nota?</p>
+
+    <textarea id="note" placeholder="Escribí lo que quieras recordar..."></textarea>
+
+    <br><br>
+
+    <button onclick="saveDay()">
+      Guardar mi día
+    </button>
+
+    <div id="saved" class="saved"></div>
+
+  </div>
+
+</section>
+
+
+<!-- PROGRESO -->
+<section id="progress" class="screen">
+
+  <button class="back" onclick="show('home')">← Volver</button>
+
+  <div class="card">
+
+    <h2>📈 Mi progreso</h2>
+
+    <p>
+      Acá vamos a ir construyendo tu historial.
+    </p>
+
+    <div id="history"></div>
+
+  </div>
+
+</section>
+
+</div>
+
+
+<script>
+
+function show(id) {
+
+  document.querySelectorAll('.screen').forEach(function(screen) {
+    screen.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+
+function selectScale(button) {
+
+  const parent = button.parentElement;
+
+  parent.querySelectorAll('button').forEach(function(btn) {
+    btn.classList.remove('selected');
+  });
+
+  button.classList.add('selected');
+}
+
+
+function saveDay() {
+
+  const note = document.getElementById('note').value;
+
+  const date = new Date().toLocaleDateString('es-ES');
+
+  const entry = {
+    date: date,
+    note: note
+  };
+
+  let history = JSON.parse(
+    localStorage.getItem('tatiCalma') || '[]'
+  );
+
+  history.push(entry);
+
+  localStorage.setItem(
+    'tatiCalma',
+    JSON.stringify(history)
+  );
+
+  document.getElementById('saved').innerHTML =
+    '✓ Guardado. Este momento también cuenta.';
+
+  document.getElementById('note').value = '';
+
+  loadHistory();
+}
+
+
+function loadHistory() {
+
+  const history = JSON.parse(
+    localStorage.getItem('tatiCalma') || '[]'
+  );
+
+  const box = document.getElementById('history');
+
+  if (history.length === 0) {
+
+    box.innerHTML =
+      '<p>Todavía no hay registros.</p>';
+
+    return;
+  }
+
+  box.innerHTML = '';
+
+  history.slice().reverse().forEach(function(entry) {
+
+    const div = document.createElement('div');
+
+    div.className = 'tool';
+
+    div.innerHTML =
+      '<h3>' + entry.date + '</h3>' +
+      '<p>' + (entry.note || 'Sin nota.') + '</p>';
+
+    box.appendChild(div);
+
+  });
+}
+
+
+loadHistory();
+
+</script>
+
+</body>
+</html>
