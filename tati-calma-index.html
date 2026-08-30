@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f1ed">
+<title>Tati · Calma</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f1ed;color:#242424;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:560px;margin:auto;padding:24px 16px 48px}.card{background:#fff;border-radius:22px;padding:20px;margin:12px 0;box-shadow:0 3px 16px #0001}
+h1{font-size:30px;margin:0 0 5px}h2{margin:0 0 10px}.sub{color:#777;font-size:14px;line-height:1.4}
+button{width:100%;border:0;border-radius:15px;padding:15px;margin:7px 0;font-size:17px;font-weight:700;background:#ebe5df;color:#242424}
+button.primary{background:#242424;color:#fff}.hidden{display:none}.tool{padding:15px;border-radius:15px;background:#f3efea;margin:8px 0;cursor:pointer}
+.tool b{display:block;margin-bottom:4px}.tool span{font-size:13px;color:#666;line-height:1.35}
+textarea,input{width:100%;padding:12px;border:1px solid #ddd5ce;border-radius:12px;font-size:16px;margin:5px 0 12px}
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}.scale button{padding:10px 0;font-size:13px;margin:0}
+.chosen{background:#242424!important;color:#fff}.timer{text-align:center;font-size:48px;font-weight:800;margin:18px}
+.back{background:transparent;text-align:left;padding:8px 0;width:auto}.small{font-size:13px;color:#777}
+</style>
+</head>
+<body><main>
+<section id="home">
+<h1>🧠 Tati · Calma</h1><div class="sub">Primero regular. Después pensar. Después actuar.</div>
+<div class="card">
+<button class="primary" onclick="show('anxiety')">🆘 ESTOY ANSIOSA</button>
+<button onclick="show('check')">📊 REGISTRAR MI DÍA</button>
+<button onclick="historyView()">📈 VER MI PROGRESO</button>
+</div>
+</section>
+
+<section id="anxiety" class="hidden"><div class="card">
+<button class="back" onclick="show('home')">← Volver</button>
+<h2>🛑 STOP</h2>
+<p><b>S — Stop:</b> pará. No hagas nada en el pico.</p>
+<p><b>T — Take a step back:</b> tomá distancia y dejá el teléfono.</p>
+<p><b>O — Observe:</b> ¿qué pasó?, ¿qué siento?, ¿qué pienso?, ¿qué impulso tengo?</p>
+<p><b>P — Proceed mindfully:</b> regulá primero; después decidí.</p>
+<p><b>Elegí una herramienta:</b></p><div id="tools"></div>
+</div></section>
+
+<section id="exercise" class="hidden"><div class="card">
+<button class="back" onclick="show('anxiety')">← Elegir otra</button>
+<h2 id="exTitle"></h2><p id="exDesc"></p><div id="exBody"></div>
+<button class="primary" onclick="finishExercise()">✓ Usé esta herramienta</button>
+</div></section>
+
+<section id="check" class="hidden"><div class="card">
+<button class="back" onclick="show('home')">← Volver</button>
+<h2>📊 Check-in</h2>
+<p><b>Ansiedad (0–10)</b></p><div class="scale" id="anx"></div>
+<p><b>Impulsividad (0–10)</b></p><div class="scale" id="imp"></div>
+<p><b>Herramienta usada</b></p><div id="checkTools"></div>
+<p><b>¿Qué pasó?</b></p><textarea id="notes" rows="4" placeholder="Muy breve…"></textarea>
+<button class="primary" onclick="saveCheck()">Guardar ✓</button>
+</div></section>
+
+<section id="history" class="hidden"><div class="card">
+<button class="back" onclick="show('home')">← Volver</button>
+<h2>📈 Mi progreso</h2><div id="hist"></div>
+</div></section>
+</main>
+
+<script>
+const data={
+resp:{t:"🌬️ Respiración",d:"Inhalá 4 segundos y exhalá lento 6–8 segundos durante 3–5 minutos.",b:"<div class='timer' id='timer'>3:00</div><button onclick='startTimer(180)'>▶ Empezar 3 minutos</button>"},
+cold:{t:"🧊 Frío / TIPP",d:"Frío breve para ayudar a bajar la activación corporal intensa.",b:"<p>Agua fría en la cara, compresa fría o algo frío en las manos. Sin forzarte.</p>"},
+ground:{t:"👣 Grounding 5–4–3–2–1",d:"Volvé al presente usando tus sentidos.",b:"<p>5 cosas que ves · 4 que tocás · 3 que oís · 2 que olés · 1 que saboreás.</p>"},
+wave:{t:"🌊 Surfear la ola",d:"Esperá 10 minutos sin actuar sobre el impulso y observá cómo cambia.",b:"<div class='timer' id='timer'>10:00</div><button onclick='startTimer(600)'>▶ Empezar 10 minutos</button>"},
+defuse:{t:"💭 Defusión ACT",d:"Tomá distancia del pensamiento: “Estoy teniendo el pensamiento de que…”.",b:"<textarea id='thought' rows='3' placeholder='¿Qué me está diciendo mi mente?'></textarea><p><b>Estoy teniendo el pensamiento de que:</b></p><div id='def' class='tool'>…</div>"},
+three:{t:"📝 Tres columnas",d:"Separá el hecho de la interpretación y de la emoción/impulso.",b:"<input placeholder='1. Qué pasó objetivamente'><textarea rows='2' placeholder='2. Qué pensé / interpreté'></textarea><textarea rows='2' placeholder='3. Qué sentí / qué impulso tuve'></textarea>"},
+delay:{t:"⏸️ Demora de respuesta",d:"No mandes mensajes ni tomes decisiones importantes mientras estés activada.",b:"<p>“Esto puede esperar. Si es importante, también será importante cuando esté más tranquila.”</p>"},
+light:{t:"🚦 Semáforo",d:"Verde: sigo. Amarillo: pauso. Naranja/rojo: no decido.",b:"<p>Si tiene consecuencias laborales, económicas, migratorias, médicas o emocionales importantes: <b>pausa</b>.</p>"}
+};
+const ids=Object.keys(data);let current="",timerId;
+function show(id){["home","anxiety","exercise","check","history"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");scrollTo(0,0)}
+function renderTools(el){document.getElementById(el).innerHTML=ids.map(id=>`<div class="tool" onclick="openEx('${id}')"><b>${data[id].t}</b><span>${data[id].d}</span></div>`).join("")}
+renderTools("tools");renderTools("checkTools");
+function openEx(id){current=id;document.getElementById("exTitle").textContent=data[id].t;document.getElementById("exDesc").textContent=data[id].d;document.getElementById("exBody").innerHTML=data[id].b;
+if(id==="defuse"){document.getElementById("thought").oninput=e=>document.getElementById("def").textContent=e.target.value?"Estoy teniendo el pensamiento de que "+e.target.value:"…"}show("exercise")}
+function startTimer(sec){clearInterval(timerId);let n=sec,el=document.getElementById("timer");timerId=setInterval(()=>{n--;el.textContent=Math.floor(n/60)+":"+String(n%60).padStart(2,"0");if(n<=0){clearInterval(timerId);el.textContent="✓ Terminado"}},1000)}
+function finishExercise(){localStorage.setItem("lastTool",current);alert("Herramienta registrada ✓");show("anxiety")}
+function makeScale(id){let e=document.getElementById(id);for(let i=0;i<=10;i++){let b=document.createElement("button");b.textContent=i;b.onclick=()=>{e.dataset.value=i;[...e.children].forEach(x=>x.classList.remove("chosen"));b.classList.add("chosen")};e.appendChild(b)}}
+makeScale("anx");makeScale("imp");
+function saveCheck(){let a=JSON.parse(localStorage.getItem("checks")||"[]");a.unshift({date:new Date().toLocaleString(),anx:document.getElementById("anx").dataset.value??"",imp:document.getElementById("imp").dataset.value??"",notes:document.getElementById("notes").value});localStorage.setItem("checks",JSON.stringify(a));alert("Guardado ✓");show("home")}
+function historyView(){show("history");let a=JSON.parse(localStorage.getItem("checks")||"[]");document.getElementById("hist").innerHTML=a.length?a.slice(0,30).map(x=>`<div class="tool"><b>${x.date}</b><span>Ansiedad: ${x.anx||"—"}/10 · Impulsividad: ${x.imp||"—"}/10<br>${x.notes||""}</span></div>`).join(""):"Todavía no hay registros."}
+</script></body></html>
