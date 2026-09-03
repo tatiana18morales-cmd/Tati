@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f4f1">
+<title>TATI · CALMA</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f4f1;color:#403b38;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:640px;margin:auto;padding:20px 18px 45px}.head{text-align:center;padding:12px 0 25px}.logo{font-size:30px;font-weight:750;letter-spacing:3px}.sub{color:#827a75;margin-top:6px}
+.screen{display:none}.screen.active{display:block}.card{background:#fff;border-radius:24px;padding:22px;margin-bottom:15px;box-shadow:0 5px 20px rgba(60,50,45,.06)}
+h2{margin:0 0 8px}.muted{color:#817873;line-height:1.5}.crisis{background:#eadbd6}
+button{font:inherit;cursor:pointer}.btn{width:100%;border:0;border-radius:15px;padding:15px;font-weight:650;background:#403b38;color:#fff;margin-top:8px}.secondary{background:#eee9e5;color:#403b38}.back{border:0;background:transparent;color:#706863;padding:4px 0 18px}
+.label{font-size:12px;color:#9b918b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}.question{font-size:24px;line-height:1.25;margin-bottom:18px}
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:5px}.scale button{border:0;border-radius:9px;padding:10px 2px;background:#eee9e5;color:#403b38}.scale button.sel{background:#403b38;color:white}.ends{display:flex;justify-content:space-between;font-size:12px;color:#948a84;margin-top:5px}
+.field{margin:19px 0}.field label{display:block;font-weight:650;margin-bottom:8px}.input,textarea{width:100%;border:1px solid #ddd5d0;border-radius:14px;padding:13px;font:inherit;background:#fff;color:#403b38}.input{height:48px}textarea{min-height:105px;resize:vertical}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.choice{border:1px solid #e1dad5;background:#faf8f6;border-radius:14px;padding:12px;text-align:left}.choice.sel{background:#403b38;color:#fff;border-color:#403b38}
+.emotions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.emotion{border:1px solid #e1dad5;background:#faf8f6;border-radius:14px;padding:11px;text-align:left}.emotion.sel{background:#403b38;color:#fff}
+.tool{background:#f3efec;border-radius:18px;padding:16px;margin:10px 0;border:2px solid transparent}.tool.sel{border-color:#403b38}.tool h3{margin:0 0 6px}.tool p{margin:0;color:#756d68;font-size:14px;line-height:1.45}.tool.sel p{color:#eee}
+.entry{background:#f8f5f2;border-radius:18px;padding:16px;margin:10px 0}.entrytop{display:flex;justify-content:space-between;gap:8px;align-items:center}.small{border:0;border-radius:10px;padding:8px 10px;background:#e9e3df;color:#403b38}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#f3efec;border-radius:17px;padding:15px}.stat strong{display:block;font-size:25px;margin-top:4px}
+.notice{text-align:center;color:#716962;padding:10px}.danger{background:#eee0dc}.hr{border:0;border-top:1px solid #eee7e2;margin:18px 0}
+</style>
+</head>
+<body>
+<main>
+<header class="head"><div class="logo">TATI · CALMA</div><div class="sub">Un lugar para bajar un cambio.</div></header>
+
+<section id="home" class="screen active">
+  <div class="card crisis"><h2>🫶 Estoy ansiosa</h2><p class="muted">Primero bajemos la intensidad. Después vemos qué necesitás.</p><button class="btn" onclick="startCalm()">Necesito ayuda ahora</button></div>
+  <div class="card"><h2>📅 Registrar mi día</h2><p class="muted">Elegí cualquier fecha y registrá cómo te sentiste.</p><button class="btn secondary" onclick="newDay()">Registrar un día</button></div>
+  <div class="card"><h2>📖 Mi diario</h2><p class="muted">Abrí tus registros por fecha.</p><button class="btn secondary" onclick="show('diary');loadDiary()">Ver mi diario</button></div>
+  <div class="card"><h2>📊 Mi progreso</h2><p class="muted">Mirá tus promedios y las técnicas que más usaste.</p><button class="btn secondary" onclick="show('progress');loadProgress()">Ver progreso</button></div>
+  <div class="card"><h2>💾 Mis datos</h2><p class="muted">Guardá una copia de seguridad o recuperá tus registros.</p><button class="btn secondary" onclick="show('backup')">Guardar / recuperar</button></div>
+  <div class="notice">🔒 Tus registros quedan guardados en este dispositivo.</div>
+</section>
+
+<section id="calm" class="screen"><button class="back" onclick="show('home')">← Volver</button>
+<div class="card"><div class="label">PASO 1</div><div class="question">¿Qué tan intensa está la ansiedad ahora?</div><div class="scale" id="calmBefore"></div><div class="ends"><span>Nada</span><span>Máxima</span></div><button class="btn" onclick="toTools()">Continuar</button></div></section>
+
+<section id="tools" class="screen"><button class="back" onclick="show('calm')">← Volver</button>
+<div class="card"><div class="label">PASO 2 · ELEGÍ UNA TÉCNICA</div><div class="question">¿Qué necesitás ahora?</div>
+<div class="tool" data-tool="Respiración 4–6" onclick="pickTool(this)"><h3>🌬️ Respiración 4–6</h3><p>Inhalá 4 segundos y exhalá 6. Una opción simple para acompañar la bajada de activación.</p></div>
+<div class="tool" data-tool="Frío / TIPP" onclick="pickTool(this)"><h3>🧊 Frío / TIPP</h3><p>Un estímulo frío puede ayudarte a cambiar rápidamente el nivel de activación. Usalo de manera segura y sin dolor.</p></div>
+<div class="tool" data-tool="Grounding 5-4-3-2-1" onclick="pickTool(this)"><h3>👀 Grounding 5-4-3-2-1</h3><p>5 cosas que ves, 4 que tocás, 3 que escuchás, 2 que olés y 1 que saboreás.</p></div>
+<div class="tool" data-tool="Retrasar la respuesta" onclick="pickTool(this)"><h3>⏳ Retrasar la respuesta</h3><p>Si querés actuar o decidir en el pico de emoción, posponelo unos minutos y volvé a evaluar.</p></div>
+<div class="tool" data-tool="Reestructuración del pensamiento" onclick="pickTool(this)"><h3>🧠 Reestructurar el pensamiento</h3><p>Preguntate: ¿qué sé con certeza?, ¿qué estoy suponiendo?, ¿qué otra explicación es posible?</p></div>
+<div class="tool" data-tool="Escritura" onclick="pickTool(this)"><h3>✍️ Escribir</h3><p>Escribí qué pasó, qué sentís, qué pensás y qué necesitás ahora.</p></div>
+<div class="tool" data-tool="Relajación muscular" onclick="pickTool(this)"><h3>💆 Relajación muscular</h3><p>Tensá y soltá grupos musculares suavemente, sin dolor, prestando atención a la diferencia.</p></div>
+<button class="btn" onclick="toAfter()">Ya hice la técnica</button></div></section>
+
+<section id="after" class="screen"><button class="back" onclick="show('tools')">← Volver</button>
+<div class="card"><div class="label">PASO 3</div><div class="question">¿Cómo está la ansiedad ahora?</div><div class="scale" id="calmAfter"></div><div class="ends"><span>Nada</span><span>Máxima</span></div>
+<div class="field"><label>¿Querés contar qué te pasó?</label><textarea id="calmNote" placeholder="Escribí lo que necesites..."></textarea></div>
+<button class="btn" onclick="saveCalm()">Guardar este momento</button><div id="calmSaved" class="notice"></div></div></section>
+
+<section id="day" class="screen"><button class="back" onclick="show('home')">← Volver</button>
+<div class="card"><h2>📅 Mi día</h2><p class="muted">Podés elegir hoy, ayer o cualquier otra fecha.</p>
+<div class="field"><label>Fecha</label><input class="input" type="date" id="dayDate"></div>
+<div class="field"><label>😊 Ánimo</label><div class="scale" id="mood"></div><div class="ends"><span>Muy mal</span><span>Excelente</span></div></div>
+<div class="field"><label>😰 Ansiedad</label><div class="scale" id="anxiety"></div><div class="ends"><span>Nada</span><span>Máxima</span></div></div>
+<div class="field"><label>⚡ Energía</label><div class="scale" id="energy"></div><div class="ends"><span>Sin energía</span><span>Muchísima</span></div></div>
+<div class="field"><label>😴 Sueño</label><input class="input" type="number" id="sleepHours" min="0" max="24" step=".5" placeholder="Horas dormidas">
+<div class="grid" style="margin-top:9px"><button class="choice" data-group="sleep" onclick="choose(this,'sleep')">Malo</button><button class="choice" data-group="sleep" onclick="choose(this,'sleep')">Regular</button><button class="choice" data-group="sleep" onclick="choose(this,'sleep')">Bueno</button><button class="choice" data-group="sleep" onclick="choose(this,'sleep')">Muy bueno</button></div></div>
+<div class="field"><label>💭 ¿Qué emociones sentí?</label><div class="emotions" id="emotions"></div></div>
+<div class="field"><label>¿Qué pasó hoy?</label><textarea id="what" placeholder="Lo importante, lo difícil, lo lindo..."></textarea></div>
+<div class="field"><label>¿Qué necesitaba?</label><textarea id="need" placeholder="Descanso, compañía, espacio, seguridad, hablar..."></textarea></div>
+<div class="field"><label>📝 Una nota para mí</label><textarea id="note" placeholder="Lo que quieras recordar de este día..."></textarea></div>
+<button class="btn" onclick="saveDay()">Guardar mi día</button><div id="daySaved" class="notice"></div></div></section>
+
+<section id="diary" class="screen"><button class="back" onclick="show('home')">← Volver</button>
+<div class="card"><h2>📖 Mi diario</h2><p class="muted">También podés elegir directamente una fecha.</p><input class="input" type="date" id="diaryDate" onchange="openDate(this.value)"><div id="diaryList" style="margin-top:15px"></div></div></section>
+
+<section id="entry" class="screen"><button class="back" onclick="show('diary');loadDiary()">← Volver</button><div class="card" id="entryContent"></div></section>
+
+<section id="progress" class="screen"><button class="back" onclick="show('home')">← Volver</button>
+<div class="card"><h2>📊 Mi progreso</h2><p class="muted">Promedios calculados con tus registros diarios.</p><div class="stats" id="stats"></div></div>
+<div class="card"><h2>🧰 Técnicas que usaste</h2><div id="toolStats"></div></div></section>
+
+<section id="backup" class="screen"><button class="back" onclick="show('home')">← Volver</button>
+<div class="card"><h2>💾 Mis datos</h2><p class="muted">Descargá un archivo con tus registros para conservar una copia. Si cambiás de teléfono, podés importar ese archivo.</p>
+<button class="btn" onclick="backup()">⬇️ Guardar copia de seguridad</button>
+<hr class="hr"><label class="field"><b>Recuperar una copia</b><input class="input" style="margin-top:8px" type="file" id="restoreFile" accept=".json" onchange="restore(this)"></label>
+<button class="btn secondary" onclick="shareAll()">📤 Compartir mis registros</button><div id="backupNotice" class="notice"></div></div></section>
+
+</main>
+<script>
+const KEY='tatiCalma_v3';
+const EMOTIONS=['😊 Feliz','😌 Tranquila','❤️ Amada','🙏 Agradecida','🥰 Ilusionada','😰 Ansiosa','😢 Triste','😡 Enojada','😞 Decepcionada','😔 Sola','😣 Frustrada','😨 Asustada','😴 Cansada','😵 Abrumada','😐 Vacía','🤍 En paz'];
+let S={};
+
+function read(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}}
+function write(x){localStorage.setItem(KEY,JSON.stringify(x))}
+function today(){return new Date().toISOString().slice(0,10)}
+function fmt(d){return new Date(d+'T12:00:00').toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'})}
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0)}
+function scale(id,key){let b=document.getElementById(id);b.innerHTML='';for(let i=0;i<=10;i++){let x=document.createElement('button');x.textContent=i;x.onclick=()=>{b.querySelectorAll('button').forEach(y=>y.classList.remove('sel'));x.classList.add('sel');S[key]=i};b.appendChild(x)}}
+function init(){['calmBefore','calmAfter','mood','anxiety','energy'].forEach(x=>scale(x,x));document.getElementById('emotions').innerHTML=EMOTIONS.map(x=>`<button class="emotion" onclick="this.classList.toggle('sel')">${x}</button>`).join('');document.getElementById('dayDate').value=today()}
+function startCalm(){S={};scale('calmBefore','calmBefore');scale('calmAfter','calmAfter');document.getElementById('calmNote').value='';document.querySelectorAll('.tool').forEach(x=>x.classList.remove('sel'));show('calm')}
+function toTools(){if(S.calmBefore==null)return alert('Elegí primero un número del 0 al 10.');show('tools')}
+function pickTool(el){document.querySelectorAll('.tool').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');S.tool=el.dataset.tool}
+function toAfter(){if(!S.tool)return alert('Elegí una técnica primero.');show('after')}
+function saveCalm(){if(S.calmAfter==null)return alert('Elegí cómo estás ahora.');let a=read();a.push({id:Date.now(),type:'calm',date:today(),before:S.calmBefore,after:S.calmAfter,tool:S.tool,note:document.getElementById('calmNote').value});write(a);document.getElementById('calmSaved').textContent='✓ Guardado.';setTimeout(()=>show('home'),700)}
+function newDay(){S={};document.getElementById('dayDate').value=today();document.querySelectorAll('#day .sel').forEach(x=>x.classList.remove('sel'));document.querySelectorAll('#day textarea').forEach(x=>x.value='');document.getElementById('sleepHours').value='';show('day')}
+function choose(el,key){document.querySelectorAll(`[data-group="${key}"]`).forEach(x=>x.classList.remove('sel'));el.classList.add('sel');S[key]=el.textContent}
+function saveDay(){let date=document.getElementById('dayDate').value;if(!date)return alert('Elegí una fecha.');let emotions=[...document.querySelectorAll('.emotion.sel')].map(x=>x.textContent);let a=read().filter(x=>!(x.type==='day'&&x.date===date));a.push({id:Date.now(),type:'day',date,mood:S.mood??null,anxiety:S.anxiety??null,energy:S.energy??null,sleepHours:document.getElementById('sleepHours').value,sleep:S.sleep||'',emotions,what:document.getElementById('what').value,need:document.getElementById('need').value,note:document.getElementById('note').value});write(a);document.getElementById('daySaved').textContent='✓ Día guardado.';setTimeout(()=>{document.getElementById('daySaved').textContent='';show('home')},700)}
+function loadDiary(){let dates=[...new Set(read().map(x=>x.date))].sort().reverse();document.getElementById('diaryList').innerHTML=dates.length?dates.map(d=>`<div class="entry"><div class="entrytop"><b>${fmt(d)}</b><button class="small" onclick="openDate('${d}')">Abrir</button></div></div>`).join(''):'<p class="muted">Todavía no hay registros.</p>'}
+function openDate(date){let e=read().filter(x=>x.date===date);if(!e.length)return;let h=`<h2>📅 ${fmt(date)}</h2>`;e.forEach(x=>{if(x.type==='day')h+=`<div class="entry"><h3>Mi día</h3><p><b>Ánimo:</b> ${v(x.mood)} · <b>Ansiedad:</b> ${v(x.anxiety)} · <b>Energía:</b> ${v(x.energy)}</p><p><b>Sueño:</b> ${x.sleepHours||'—'} h${x.sleep?' · '+x.sleep:''}</p><p><b>Emociones:</b> ${x.emotions?.join(', ')||'—'}</p><p><b>Qué pasó:</b> ${safe(x.what)}</p><p><b>Qué necesitaba:</b> ${safe(x.need)}</p><p><b>Nota:</b> ${safe(x.note)}</p></div>`;else h+=`<div class="entry"><h3>🫶 Momento de ansiedad</h3><p><b>Antes:</b> ${x.before}/10 → <b>Después:</b> ${x.after}/10</p><p><b>Técnica:</b> ${safe(x.tool)}</p><p>${safe(x.note)}</p></div>`});h+=`<button class="btn" onclick="shareDate('${date}')">📤 Compartir este día</button>`;document.getElementById('entryContent').innerHTML=h;show('entry')}
+function v(x){return x==null?'—':x+'/10'}function safe(x){return x?String(x).replace(/</g,'&lt;'):'—'}
+async function share(text){if(navigator.share){try{await navigator.share({title:'TATI · CALMA',text})}catch(e){}}else{try{await navigator.clipboard.writeText(text);alert('Copiado al portapapeles.')}catch(e){alert(text)}}}
+function textFor(entries,date){let t=`TATI · CALMA\n${fmt(date)}\n\n`;entries.forEach(x=>{if(x.type==='day')t+=`MI DÍA\nÁnimo: ${v(x.mood)}\nAnsiedad: ${v(x.anxiety)}\nEnergía: ${v(x.energy)}\nSueño: ${x.sleepHours||'—'} h${x.sleep?' · '+x.sleep:''}\nEmociones: ${x.emotions?.join(', ')||'—'}\nQué pasó: ${x.what||'—'}\nQué necesitaba: ${x.need||'—'}\nNota: ${x.note||'—'}\n\n`;else t+=`MOMENTO DE ANSIEDAD\nAntes: ${x.before}/10\nDespués: ${x.after}/10\nTécnica: ${x.tool}\nNota: ${x.note||'—'}\n\n`});return t}
+function shareDate(d){share(textFor(read().filter(x=>x.date===d),d))}
+function shareAll(){let a=read().sort((x,y)=>x.date.localeCompare(y.date));share(a.length?a.map(x=>textFor([x],x.date)).join('\n---\n\n'):'Todavía no hay registros.')}
+function loadProgress(){let d=read().filter(x=>x.type==='day'),c=read().filter(x=>x.type==='calm');let avg=k=>{let a=d.map(x=>x[k]).filter(x=>typeof x==='number');return a.length?(a.reduce((p,q)=>p+q,0)/a.length).toFixed(1):'—'};document.getElementById('stats').innerHTML=`<div class="stat">Días<strong>${d.length}</strong></div><div class="stat">Ánimo medio<strong>${avg('mood')}</strong></div><div class="stat">Ansiedad media<strong>${avg('anxiety')}</strong></div><div class="stat">Energía media<strong>${avg('energy')}</strong></div>`;let q={};c.forEach(x=>q[x.tool]=(q[x.tool]||0)+1);let z=Object.entries(q).sort((a,b)=>b[1]-a[1]);document.getElementById('toolStats').innerHTML=z.length?z.map(x=>`<div class="entry"><b>${x[0]}</b><br><span class="muted">${x[1]} vez${x[1]===1?'':'es'}</span></div>`).join(''):'<p class="muted">Todavía no hay técnicas registradas.</p>'}
+function backup(){let blob=new Blob([JSON.stringify(read(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='tati-calma-backup.json';a.click();URL.revokeObjectURL(url);document.getElementById('backupNotice').textContent='✓ Copia guardada.'}
+function restore(input){let f=input.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!Array.isArray(x))throw 0;write(x);document.getElementById('backupNotice').textContent='✓ Registros recuperados.'}catch(e){alert('Ese archivo no parece una copia válida de TATI · CALMA.')}};r.readAsText(f)}
+init();
+</script>
+</body>
+</html>
